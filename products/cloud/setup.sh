@@ -64,12 +64,12 @@ echo "##########################################################################
 # 
 #
 ##############################################################################
-echo "gcloud beta container clusters create $PRODUCT_CLUSTER_NAME "
+echo "gcloud container clusters create $PRODUCT_CLUSTER_NAME "
 gcloud beta container clusters create $PRODUCT_CLUSTER_NAME \
     --project $PROJECT_NAME \
     --zone $PROJECT_ZONE \
     --no-enable-basic-auth \
-    --cluster-version "1.14.7-gke.10" \
+    --cluster-version "1.14.8-gke.12" \
     --machine-type "n1-standard-1" \
     --image-type "COS" \
     --disk-type "pd-standard" \
