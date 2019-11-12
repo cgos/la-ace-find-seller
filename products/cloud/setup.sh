@@ -23,6 +23,7 @@ mkdir -p ../app/secrets
 SERVICE_ACCOUNT_NAME=product-service
 SERVICE_ACCOUNT_DEST=../app/secrets/service_account.json
 
+echo "gcloud iam service-accounts create"
 gcloud iam service-accounts create \
     $SERVICE_ACCOUNT_NAME \
     --display-name $SERVICE_ACCOUNT_NAME
@@ -31,22 +32,27 @@ SA_EMAIL=$(gcloud iam service-accounts list \
     --filter="displayName:$SERVICE_ACCOUNT_NAME" \
     --format='value(email)')
 
+echo "gcloud projects add-iam-policy-binding $PROJECT_NAME bigtable"
 gcloud projects add-iam-policy-binding $PROJECT_NAME \
     --role roles/bigtable.user \
     --member serviceAccount:$SA_EMAIL
 
+echo "gcloud projects add-iam-policy-binding $PROJECT_NAME storage"
 gcloud projects add-iam-policy-binding $PROJECT_NAME \
     --role roles/storage.objectAdmin \
     --member serviceAccount:$SA_EMAIL
 
+echo "gcloud projects add-iam-policy-binding $PROJECT_NAME bigquery dataviewer"
 gcloud projects add-iam-policy-binding $PROJECT_NAME \
     --role roles/bigquery.dataViewer \
     --member serviceAccount:$SA_EMAIL
 
+echo "gcloud projects add-iam-policy-binding $PROJECT_NAME bigquery jobUser"
 gcloud projects add-iam-policy-binding $PROJECT_NAME \
     --role roles/bigquery.jobUser \
     --member serviceAccount:$SA_EMAIL
 
+echo "gcloud iam service-accounts keys create $SERVICE_ACCOUNT_DEST --iam-account $SA_EMAIL"
 gcloud iam service-accounts keys create $SERVICE_ACCOUNT_DEST --iam-account $SA_EMAIL
 
 echo "##############################################################################"
@@ -58,11 +64,12 @@ echo "##########################################################################
 # 
 #
 ##############################################################################
+echo "gcloud beta container clusters create $PRODUCT_CLUSTER_NAME "
 gcloud beta container clusters create $PRODUCT_CLUSTER_NAME \
     --project $PROJECT_NAME \
     --zone $PROJECT_ZONE \
     --no-enable-basic-auth \
-    --cluster-version "1.9.7-gke.3" \
+    --cluster-version "1.14.7-gke.10" \
     --machine-type "n1-standard-1" \
     --image-type "COS" \
     --disk-type "pd-standard" \
